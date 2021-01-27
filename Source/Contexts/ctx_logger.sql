@@ -1,0 +1,1 @@
+CREATE CONTEXT ctx_logger USING logger_api ACCESSED GLOBALLY;

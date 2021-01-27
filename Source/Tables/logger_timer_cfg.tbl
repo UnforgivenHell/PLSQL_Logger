@@ -1,0 +1,15 @@
+CREATE TABLE logger_timer_cfg
+(
+  scope_name VARCHAR2(60 CHAR) NOT NULL,
+  status     NUMBER(1) NOT NULL,
+  CONSTRAINT pk_logger_timer_cfg PRIMARY KEY (scope_name)
+) ORGANIZATION INDEX
+  TABLESPACE &index_tbs;
+
+COMMENT ON TABLE logger_timer_cfg IS 'scope_name';
+
+COMMENT ON COLUMN logger_timer_cfg.scope_name  IS 'Scope name';
+COMMENT ON COLUMN logger_timer_cfg.status      IS '0 - disabled; 1 - enabled';
+
+ALTER TABLE logger_timer_cfg ADD CONSTRAINT chk_logger_timer_cfg#status
+  CHECK (status IN (0, 1));

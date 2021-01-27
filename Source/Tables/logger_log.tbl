@@ -1,0 +1,34 @@
+CREATE TABLE logger_log
+(
+  log_date      TIMESTAMP(6) DEFAULT SYSTIMESTAMP NOT NULL,
+  log_level_id  NUMBER NOT NULL,
+  scope_name    VARCHAR2(255 CHAR) NOT NULL,
+  error_text    VARCHAR2(4000 CHAR),
+  sid           INTEGER NOT NULL,
+  serial#       INTEGER NOT NULL,
+  machine       VARCHAR2(64 CHAR) NOT NULL,
+  osuser        VARCHAR2(64 CHAR) NOT NULL,
+  call_stack    VARCHAR2(4000 CHAR),
+  params        SYS.XMLTYPE,
+  oper_duration INTERVAL DAY(2) TO SECOND(3)
+) TABLESPACE &data_tbs
+PARTITION BY RANGE (log_date) INTERVAL (NUMTODSINTERVAL(1, 'DAY'))
+(
+  PARTITION P_MIN VALUES LESS THAN (to_date('01.01.2021', 'dd.mm.yyyy'))
+);
+
+COMMENT ON TABLE logger_log IS 'Logging table';
+
+COMMENT ON COLUMN logger_log.log_date       IS 'Log date';
+COMMENT ON COLUMN logger_log.log_level_id   IS 'ID of the looging level';
+COMMENT ON COLUMN logger_log.scope_name     IS 'Scope name';
+COMMENT ON COLUMN logger_log.error_text     IS 'Error text';
+COMMENT ON COLUMN logger_log.sid            IS 'Session SID';
+COMMENT ON COLUMN logger_log.serial#        IS 'Session SERIAL#';
+COMMENT ON COLUMN logger_log.machine        IS 'Session MACHINE';
+COMMENT ON COLUMN logger_log.osuser         IS 'Session OSUSER';
+COMMENT ON COLUMN logger_log.call_stack     IS 'Call stack';
+COMMENT ON COLUMN logger_log.params         IS 'List of parameters in XML format';
+COMMENT ON COLUMN logger_log.oper_duration  IS 'Operation duration';
+
+CREATE INDEX i_logger_log#scope_name ON logger_log ( scope_name, log_date) TABLESPACE &index_tbs;
